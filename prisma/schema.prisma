@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url = env("DATABASE_URL")
+}
+
+model Conversion {
+  id        String   @id @default(cuid())
+  fileKey   String   @unique
+  ext       String
+  storage   String @default("local")
+  title     String
+  channel   String?
+  videoId   String?
+  thumbnail String?
+  quality   String
+  engine    String   @default("ytdlp")
+  sizeBytes Int      @default(0)
+  duration  Int?
+  trimStart Int?
+  trimEnd   Int?
+  tagged    Boolean  @default(false)
+  ownerKey  String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([ownerKey])
+}
+
+/* Runtime admin overrides (key/value). Currently used for the Turnstile
+   solver URL the owner can swap from the hidden admin panel. */
+model AdminSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
